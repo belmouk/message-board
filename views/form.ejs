@@ -1,12 +1,29 @@
 <form action="/new" method="POST">
   <label for="username">
     User:
-    <input type="text" id="username" name="username" />
+    <input
+      type="text"
+      id="username"
+      name="username"
+      value="<%= oldInput?.username || '' %>"
+    />
   </label>
+  <% if (errors.username) { %>
+    <p style="color: red"><%= errors.username.msg %></p>
+  <% }%>
+  
 
   <label for="text">
     Message:
-    <input type="text" id="text" name="text" />
+    <input
+      type="text"
+      id="text"
+      name="text"
+      value="<%= oldInput?.text || '' %>"
+    />
   </label>
+  <% if (errors.text) { %>
+    <p style="color: red"><%= errors.text.msg %></p>
+  <% }%>
   <button type="submit">Send</button>
 </form>
