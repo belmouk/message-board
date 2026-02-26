@@ -1,16 +1,14 @@
 import { Router } from "express";
+import * as db from "../db/queries.js";
 
 const router = Router();
 
-const messages = [
-  { id: 1, text: "Hi there", user: "Amando", added: new Date() },
-  { id: 2, text: "Hello world", user: "Charles", added: new Date() },
-];
-
-let id = 3;
-
-router.get("/", (req, res) => {
-  res.render("index", { title: "Message Board", messages: messages });
+router.get("/", async (req, res) => {
+  const messages = await db.getAllMessages();
+  res.render("index", {
+    title: "Message Board",
+    messages: messages,
+  });
 });
 
 router
@@ -18,21 +16,15 @@ router
   .get((req, res) => {
     res.render("form");
   })
-  .post((req, res) => {
-    const { text, user } = req.body;
-    messages.push({
-      id,
-      text,
-      user,
-      added: new Date(),
-    });
-    id++;
+  .post(async (req, res) => {
+    const { text, username } = req.body;
+    await db.addMessage(username, text);
     res.redirect("/");
   });
-router.get("/message/:id", (req, res) => {
-  const message = messages.find(
-    (message) => message.id === Number(req.params.id),
-  );
+
+router.get("/message/:id", async (req, res) => {
+  const messageId = req.params.id;
+  const message = await db.getMessage(messageId);
   res.render("message", { title: "Message Board", message: message });
 });
 
